@@ -11,18 +11,6 @@ const
 
 type pixArray = ptr array[sz*4,uint8]
 
-proc drawPixels(pixles : pixArray, cntr : int)=
-
-  proc getColorVal(i : int): uint8 {.inline.} =
-    return uint8((i*256/%(h+w-2) + cntr) mod 256)
-
-  proc getOffset(i, j, k : int): int {.inline.} = return (i*h+j)*4 + k
-
-  for i in 0..w-1:
-    for j in 0..h-1:
-        pixles[getOffset(i,j,0) ] = getColorVal(i + h - j)
-        pixles[getOffset(i,j,1)] = getColorVal(i + j)
-        pixles[getOffset(i,j,2)] = getColorVal(w - i + j)
 
 block outerloop:
   let
@@ -61,8 +49,8 @@ block outerloop:
 
     const lineLen : int = 150
 
-    var ptsList  = [ sdl2.point(50,51), sdl2.point(50,52) , sdl2.point(50,52)]
-   # var ptsList : array[lineLen,sdl2.Point]
+   # var ptsList  = [ sdl2.point(50,51), sdl2.point(50,52) , sdl2.point(50,52)]
+    var ptsList : array[lineLen,sdl2.Point]
     for i in 0..lineLen-1:
       ptsList[i] = sdl2.point(50+i,50+i)
     var serror : SdlReturn = render.drawPoints(ptsList[0].addr,cint(lineLen))
