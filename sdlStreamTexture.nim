@@ -11,19 +11,19 @@ const
 
 type pixArray = ptr array[sz*4,uint8]
 
+
+proc offset(i, j, k : int): int {.inline.} = return (i*h+j)*4 + k
+
+proc colorVal(i, cntr : int): uint8 {.inline.} = return uint8((i*256/%(h+w-2) + cntr) mod 256)
+
+
 proc drawPixels(pixels : pixArray, cntr : int)= # Just draws a nice pattern into the pixArray colored by cntr
-
-   # Two ways to do a local function, which is faster?
-  let colorVal = proc (i : int): uint8 {.inline.} =
-    return uint8((i*256/%(h+w-2) + cntr) mod 256)
-
-  proc offset(i, j, k : int): int {.inline.} = return (i*h+j)*4 + k
 
   for i in 0..w-1:
     for j in 0..h-1:
-        pixels[offset(i,j,0) ] = colorVal(i + h - j)
-        pixels[offset(i,j,1)] = colorVal(i + j)
-        pixels[offset(i,j,2)] = colorVal(w - i + j)
+        pixels[offset(i,j,0) ] = colorVal(i + h - j,cntr)
+        pixels[offset(i,j,1)] = colorVal(i + j,cntr)
+        pixels[offset(i,j,2)] = colorVal(w - i + j,cntr)
 
 block outerloop:
 
@@ -43,11 +43,10 @@ block outerloop:
     cntr: int
     tpitch : cint
     pnts : pointer
-    fpsman: FpsManager
     evt : Event = sdl2.defaultEvent
 
-  fpsman.init
-  fpsman.setFramerate(30)
+ # fpsman.init
+ # fpsman.setFramerate(30)
 
   while true:
     while pollEvent(evt):
@@ -68,5 +67,5 @@ block outerloop:
     assert sdlReturn == SdlSuccess
 
     render.present
-    let dt = fpsman.delay
-    echo("cntr ", cntr,  " dt " , dt)
+   # let dt = fpsman.delay
+    #echo("cntr ", cntr,  " dt " , dt)
